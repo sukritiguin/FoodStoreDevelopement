@@ -38,9 +38,11 @@ class UserManager(BaseUserManager):
         user.save(using = self._db)
     
 class User(AbstractBaseUser):
+    VENDOR = 1
+    CUSTOMER = 2
     ROLE_CHOICES = (
-        (1, 'Restaurent'),
-        (2, 'Customer')
+        (VENDOR, 'Vendor'),
+        (CUSTOMER, 'Customer')
     )
 
     first_name = models.CharField(max_length=50)
