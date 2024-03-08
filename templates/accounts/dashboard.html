@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Welcome!</h1>
+<h2>{{user.firstname}} {{user.lastname}}</h2>
+<h3>{{user.get_role}}</h3>
+
+{% include 'includes/alerts.html' %}
+
+{% endblock %}
