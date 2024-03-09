@@ -2,6 +2,9 @@ from django.shortcuts import redirect, render
 from django.contrib import messages, auth
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import PermissionDenied
+# from base64 import urlsafe_b64decode
+from django.utils.http import urlsafe_base64_decode
+from django.contrib.auth.tokens import default_token_generator
 
 from .forms import UserForm
 from vendor.forms import VendorForm
@@ -48,6 +51,12 @@ def registerUser(request):
             user = User.objects.create_user(first_name=first_name, last_name=last_name, username=username, email=email, password=password)
             user.role = User.CUSTOMER
             user.save()
+
+            # Send verification email
+            mail_subject = 'Please activate your account'
+            mail_template = 'accounts/emails/account_verification_email.html'
+            send_custom_email(request, user, mail_subject, mail_template)
+
             messages.success(request, 'Your account has been registered successfully.')
             return redirect('registerUser')
         else: # - If form is not valid
@@ -72,24 +81,7 @@ def registerVendor(request):
         user_form = UserForm(request.POST)
         vendor_form = VendorForm(request.POST, request.FILES)
 
-        print("================================================================")
-        print("CAME HERE>>>>>")
-        print("================================================================")
-
-        if(user_form.is_valid()):
-            print("================================================")
-            print("User form is valid")
-            print("================================================")
-        
-        if(vendor_form.is_valid()):
-            print("================================================")
-            print("Vendor form is valid")
-            print("================================================")
-
         if user_form.is_valid() and vendor_form.is_valid():
-            print("================================================================")
-            print("Both form is valid")
-            print("================================================================")
             first_name = user_form.cleaned_data['first_name']
             last_name = user_form.cleaned_data['last_name']
             username = user_form.cleaned_data['username']
@@ -104,6 +96,9 @@ def registerVendor(request):
             vendor.user_profile = user_profile
             vendor.save()
             messages.success(request, 'Your register has been registered successfully. Wait for the approval.')
+            mail_subject = 'Please activate your account'
+            mail_template = 'accounts/emails/account_verification_email.html'
+            send_custom_email(request, user, mail_subject, mail_template)
             return redirect('registerVendor')
         else:
             print("Invalid form")
@@ -133,7 +128,7 @@ def login(request):
         if user is not None:
             auth.login(request, user)
             messages.success(request, 'You are now logged in.')
-            return redirect('dashboard')
+            return redirect('myAccount')
         else:
             messages.error(request, 'Invalid login credential.')
             return redirect('login')
@@ -169,3 +164,77 @@ def vendorDashboard(request):
 def customerDashboard(request):
     return render(request, 'accounts/customerDashboard.html')
 
+
+# Email verification
+
+def activate(request, uidb64, token):
+    # Now verify and activate the user using given token over email
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User._default_manager.get(pk=uid)
+    except(TypeError, ValueError, User.DoesNotExist) as e:
+        print("================================================================")
+        print("Error Occured")
+        print(e)
+        print("================================================================")
+        user = None
+    
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        messages.success(request, 'Congratulations. You have successfully activated.')
+        return redirect('myAccount')
+    else:
+        messages.error(request, 'Invalid account activation.')
+        return redirect('myAccount')
+    
+
+def forgotPassword(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        if User.objects.filter(email=email).exists():
+            user = User.objects.get(email__exact=email)
+
+            # Send reset password mail to the user
+            mail_subject = 'Reset your password by clicking the link below.'
+            mail_template = 'accounts/emails/reset_password_email.html'
+            send_custom_email(request, user, mail_subject, mail_template)
+            messages.success(request, 'Password reset link has been sent to your email address.')
+            return redirect('login')
+        else:
+            messages.error(request, 'Account does not exist.')
+            return redirect('forgotPassword')
+    return render(request, 'accounts/forgotPassword.html')
+
+def resetPassword(request):
+    if request.method == 'POST':
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if password == confirm_password:
+            pk = request.session.get('uid')
+            user = User.objects.get(pk=pk)
+            user.set_password(password)
+            user.is_active = True
+            user.save()
+            messages.success(request, 'Password changed successfully')
+            return redirect('login')
+        else:
+            messages.error(request, 'Password do not match')
+            return redirect('resetPassowrd')
+    return render(request, 'accounts/resetPassword.html')
+
+def resetPasswordValidate(request, uidb64, token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User._default_manager.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        request.session['uid'] = uid
+        messages.info(request, 'Please reset your password')
+        return redirect('resetPassword')
+    else:
+        messages.warning(request, 'This link has been expired.')
+        return redirect('login')

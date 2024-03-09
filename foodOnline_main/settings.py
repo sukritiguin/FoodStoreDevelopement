@@ -153,3 +153,11 @@ MESSAGE_TAGS = {
     messages.SUCCESS: 'success',
     messages.INFO: 'info',
 }
+
+# Email Configuration
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT', cast=int)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER_NEW')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD_NEW')
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = "Sukriti's Tasty Treat"
