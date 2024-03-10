@@ -1,0 +1,12 @@
+{% autoescape off %}
+
+Hi {{user.firstname}},
+
+{% if is_approved %}
+Congratulations!!! Your restaurant has been approved by admin.
+{% else %}
+Sorry, Your restaurant has been rejected by admin.
+For more information, please contact support at developer.sukriti@gmail.com.
+{% endif %}
+
+{% endautoescape %}

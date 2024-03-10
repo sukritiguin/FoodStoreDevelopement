@@ -8,6 +8,7 @@ from django.contrib.auth.tokens import default_token_generator
 
 from .forms import UserForm
 from vendor.forms import VendorForm
+from vendor.models import Vendor
 from .models import User, UserProfile
 from .utils import *
 
@@ -173,10 +174,6 @@ def activate(request, uidb64, token):
         uid = urlsafe_base64_decode(uidb64).decode()
         user = User._default_manager.get(pk=uid)
     except(TypeError, ValueError, User.DoesNotExist) as e:
-        print("================================================================")
-        print("Error Occured")
-        print(e)
-        print("================================================================")
         user = None
     
     if user is not None and default_token_generator.check_token(user, token):
