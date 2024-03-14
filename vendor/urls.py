@@ -10,6 +10,11 @@ urlpatterns = [
 
     # Cetrgory CURD
     path('menu-builder/category/add/', views.vendorMenuBuilderAddCategory, name='vendorMenuBuilderAddCategory'),
-    path('menu-builder/category/edit/<int:pk>/', views.vendorMenuBuilderEditCategory, name='vendorMenuBuilderEditCategory'),
-    path('menu-builder/category/delete/<int:pk>', views.vendorMenuBuilderDeleteCategory, name='vendorMenuBuilderDeleteCategory'),
+    path('menu-builder/category/edit/<slug:slug>/', views.vendorMenuBuilderEditCategory, name='vendorMenuBuilderEditCategory'),
+    path('menu-builder/category/delete/<slug:slug>', views.vendorMenuBuilderDeleteCategory, name='vendorMenuBuilderDeleteCategory'),
+
+    # FoodItem CURD
+    path('menu-builder/foodItem/add/', views.vendorMenuBuilderAddFoodItem, name='vendorMenuBuilderAddFoodItem'),
+    path('menu-builder/foodItem/edit/<int:pk>/', views.vendorMenuBuilderEditFoodItem, name='vendorMenuBuilderEditFoodItem'),
+    path('menu-builder/foodItem/delete/<int:pk>/', views.vendorMenuBuilderDeleteFoodItem, name='vendorMenuBuilderDeleteFoodItem'),
 ]

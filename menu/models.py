@@ -1,5 +1,5 @@
 from django.utils import timezone
-
+from django.utils.text import slugify
 from django.db import models
 from vendor.models import Vendor
 
@@ -18,6 +18,17 @@ class Category(models.Model):
 
     def clean(self):
         self.category_name = self.category_name.capitalize()
+
+    # def save(self, *args, **kwargs):
+    #     # Generate slug based on category name and vendor ID
+    #     if not self.slug:
+    #         base_slug = slugify(f"{self.category_name}-{self.vendor.id}")
+    #         self.slug = base_slug
+    #         suffix = 1
+    #         while Category.objects.filter(slug=self.slug).exists():
+    #             self.slug = f"{base_slug}-{suffix}"
+    #             suffix += 1
+    #     super().save(*args, **kwargs)
 
     def __str__(self):
         return self.category_name

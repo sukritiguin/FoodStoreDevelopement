@@ -21,43 +21,43 @@
 									<!-- Build Your Menu : Start here -->
                                     <hr>
                                     <h6>Menu Categories</h6>
-                                    <div class="btn btn-success m-0 p-0 float-right m-1">
-                                        <form id="sort-form" method="get" action="{% url 'vendorMenuBuilder' %}">
-                                            <select name="sort" id="sort-select" class="form-control" style="height: 20px; width: 5px">
-                                                <option value="">None</option>
-                                                <option value="category_name" {% if request.GET.sort == 'category_name' %} selected {% endif %}>Name</option>
-                                                <option value="created_at" {% if request.GET.sort == 'created_at' %} selected {% endif %}>Creation Date</option>
-                                                <option value="updated_at" {% if request.GET.sort == 'updated_at' %} selected {% endif %}>Last Update</option>
-                                            </select>
-                                            <script>
-                                                document.getElementById('sort-select').onchange = function() {
-                                                    document.getElementById('sort-form').submit();
-                                                };
-                                            </script>
-                                        </form>
-                                    </div>
-                                    <a href="" class="btn btn-success float-right m-1"><i class="fa fa-plus" aria-hidden="true"></i> Add Food</a>
-                                    <a href="{% url 'vendorMenuBuilderAddCategory' %}" class="btn float-right m-1" style="background-color: rgb(208, 59, 59); color: #fff;"><i class="fa fa-plus"></i> Add Category</a>
-                                    <table class="table table-hover table-borderless">
-                                        <!-- <thead>
-                                            <tr class="text-left">
-                                                <th scope="col">#</th>
-                                                <th scope="col">#</th>
-                                                <th scope="col">#</th>
-                                            </tr>
-                                        </thead> -->
-                                        <tbody>
-                                            {% for category in categories %}
-                                                <tr>
-                                                    <td>{{ forloop.counter }}</td>
-                                                    <td class="text-left">
-                                                        <a href="{% url 'vendorMenuBuilderCategory' category.id %}"><p class="mb-0 font-weight-bold">{{category.category_name}}</p></a>
-                                                    </td>
-                                                    <td class="text-right"><a href="{% url 'vendorMenuBuilderEditCategory' category.id %}" class="text-info"><i class="fa fa-edit text-info"></i></a> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <a href="{% url 'vendorMenuBuilderDeleteCategory' category.id %}" onclick="return confirm('Are you sure you want to delete this category?')"><i class="fa fa-trash text-danger"></i></a></td>
-                                                </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
+                                    {% if categories %}
+                                        <div class="btn btn-success m-0 p-0 float-right m-1">
+                                            <form id="sort-form" method="get" action="{% url 'vendorMenuBuilder' %}">
+                                                <select name="sort" id="sort-select" class="form-control" style="height: 20px; width: 5px">
+                                                    <option value="">None</option>
+                                                    <option value="category_name" {% if request.GET.sort == 'category_name' %} selected {% endif %}>Name</option>
+                                                    <option value="created_at" {% if request.GET.sort == 'created_at' %} selected {% endif %}>Creation Date</option>
+                                                    <option value="updated_at" {% if request.GET.sort == 'updated_at' %} selected {% endif %}>Last Update</option>
+                                                </select>
+                                                <script>
+                                                    document.getElementById('sort-select').onchange = function() {
+                                                        document.getElementById('sort-form').submit();
+                                                    };
+                                                </script>
+                                            </form>
+                                        </div>
+                                        <a href="{% url 'vendorMenuBuilderAddFoodItem' %}" class="btn btn-success float-right m-1"><i class="fa fa-plus" aria-hidden="true"></i> Add Food</a>
+                                        <a href="{% url 'vendorMenuBuilderAddCategory' %}" class="btn float-right m-1" style="background-color: rgb(208, 59, 59); color: #fff;"><i class="fa fa-plus"></i> Add Category</a>
+                                        <table class="table table-hover table-borderless">
+                                            <tbody>
+                                                {% for category in categories %}
+                                                    <tr>
+                                                        <td>{{ forloop.counter }}</td>
+                                                        <td class="text-left">
+                                                            <a href="{% url 'vendorMenuBuilderCategory' category.id %}"><p class="mb-0 font-weight-bold">{{category.category_name}}</p></a>
+                                                        </td>
+                                                        <td class="text-right"><a href="{% url 'vendorMenuBuilderEditCategory' category.id %}" class="text-info"><i class="fa fa-edit text-info"></i></a> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <a href="{% url 'vendorMenuBuilderDeleteCategory' category.id %}" onclick="return confirm('Are you sure you want to delete this category?')"><i class="fa fa-trash text-danger"></i></a></td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    {% else %}
+                                        <h5 class="text-center text-danger" style="margin-top: 50px;">No category found.</h5>
+                                        <div class="text-center">
+                                            <a href="{% url 'vendorMenuBuilderAddCategory' %}" class="btn btn-success m-1"><i class="fa fa-plus"></i> Add Category</a>
+                                        </div>
+                                    {% endif %}
                                     <!-- Build Your Menu : End Here -->
 								</div>
 							</div>
