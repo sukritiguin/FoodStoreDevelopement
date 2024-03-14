@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% include 'includes/alerts.html' %}
+
+		<!-- Main Section Start -->
+		<div class="main-section">
+			{% include 'includes/cover.html' %}
+			<div class="page-section account-header buyer-logged-in">
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+							{% include 'includes/vendor_sidebar.html' %}
+						</div>
+						<div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+							<div class="user-dashboard loader-holder">
+								<div class="user-holder">
+									
+									<h2 class="text-uppercase">Build Your Categories</h2>
+									<!-- Build Your Menu : Start here -->
+                                    <hr>
+                                    <h6>Add New Category</h6>
+                                    <form action="{% url 'vendorMenuBuilderAddCategory' %}" method="POST">
+                                        {% csrf_token %}
+                                        <div class="form-fields-set">
+                                            <div class="col-lg-12 col-md-12 col-sm-12">
+                                                <div class="field-holder">
+                                                    <label for="">Category Name *</label>
+                                                    {{form.category_name}}
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-12 col-md-12 col-sm-12">
+                                                <div class="field-holder">
+                                                    <label for="">Description</label>
+                                                    {{form.description}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% for field in form %}
+                                            {% if field.errors %}
+                                                {% for error in field.errors %}
+                                                    <li class="text-danger">{{error}}</li>
+                                                {% endfor %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        <div class="col-lg-12 col-md-12 col-sm-12 text-center"> <!-- Center the button -->
+                                            <button type="submit" class="btn btn-success p-2"> <i class="fa fa-plus"></i> &nbsp; Add</button>
+                                        </div>
+                                    </form>
+                                    <!-- Build Your Menu : End Here -->
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Main Section End -->
+
+
+
+{% endblock %}
