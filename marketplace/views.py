@@ -78,7 +78,6 @@ def vendorDeatils(request, vendor_slug):
 
 
 def addToCart(request, food_id):
-    
     if request.user.is_authenticated:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             try:
@@ -116,6 +115,51 @@ def addToCart(request, food_id):
         })
     
     return JsonResponse({
-        'status': 'Failed',
+        'status': 'login_required',
         'message': 'Please log in to continue.'
     })
+
+
+def decreaseCart(request, food_id):
+    if request.user.is_authenticated:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            try:
+                fooditem = FoodItem.objects.get(id=food_id)
+                # Check if user has already added the food item to cart or not
+                try:
+                    # Retrieve the cart item based on the fooditem and user
+                    cart = Cart.objects.get(user=request.user, fooditem=fooditem)
+                    # Cart exists, so increase the quantity
+                    if cart.quantity >= 1:
+                        cart.quantity -= 1
+                        cart.save()
+                    else:
+                        cart.delete()
+                        cart.quantity = 0
+                    return JsonResponse({
+                        'status': 'success',
+                        'cart_counter': get_cart_counter(request),
+                        'quantity': cart.quantity,
+                    })
+                except Cart.DoesNotExist:
+                    return JsonResponse({
+                        'status': 'success',
+                        'message': 'Food item added to the cart successfully.',
+                        'cart_counter': get_cart_counter(request),
+                        'quantity': cart.quantity,
+                    })
+            except FoodItem.DoesNotExist:
+                return JsonResponse({
+                    'status': 'Failed',
+                    'message': 'Food item does not exist'
+                })
+        return JsonResponse({
+            'status': 'Failed',
+            'message': 'Invalid Request'
+        })
+    
+    return JsonResponse({
+        'status': 'login_required',
+        'message': 'Please log in to continue.'
+    })
+
